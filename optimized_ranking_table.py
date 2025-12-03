@@ -79,42 +79,77 @@ def normalize_graph(graph: dict):
 
 def pageRank_weighted(graph, d=0.85, tol=1e-8, max_iter=200):
     """
-    graph[node] = {opponent: weight}   (e.g., goal difference)
+    Compute the weighted PageRank of a directed graph with correct handling
+    of dangling nodes (nodes with no outgoing edges).
+
+    Parameters
+    ----------
+    graph : dict
+        A dictionary representing the weighted directed graph in adjacency form:
+        {
+            node_u: {node_v: weight_uv, ...},
+            ...
+        }
+        Edges are assumed to be outgoing from `node_u` toward `node_v`.
+        All edge weights must be non-negative.
+
+    d : float, optional (default=0.85)
+        Damping factor (probability of continuing the random walk). Must be in (0, 1).
+
+    tol : float, optional (default=1e-8)
+        Convergence tolerance. The iteration stops when the L1 norm of the
+        change in PageRank scores is below this threshold.
+
+    max_iter : int, optional (default=200)
+        Maximum number of power iterations to perform.
+
+    Returns
+    -------
+    dict
+        A dictionary mapping each node to its normalized PageRank score.
+        The scores sum to 1.
+
+    Notes
+    -----
+    - Dangling nodes (nodes with zero weighted outdegree) contribute their
+      entire PageRank mass uniformly to all nodes at every iteration.
+    - This implementation performs the standard PageRank power iteration:
+
+        PR_new(v) =
+            (1 - d)/N
+          + d * (dangling_mass / N)
+          + d * sum_{u->v} PR(u) * (weight_uv / out_weight(u))
+
+    - The algorithm is guaranteed to converge for 0 < d < 1.
     """
     nodes = list(graph.keys())
     n = len(nodes)
     node_set = set(nodes)
 
     # Compute weighted outdegree (sum of weights)
-    out_weight = {}
-    for node in nodes:
-        total = sum(graph[node].get(dest, 0) for dest in graph[node])
-        out_weight[node] = total
+    out_weight = {node: sum(graph[node].values()) for node in nodes}
 
     # Build reverse graph (incoming weighted edges)
     rev_graph = {node: [] for node in nodes}
     for src, edges in graph.items():
         for dest, w in edges.items():
             if dest in node_set:
-                # store: (src, weight)
                 rev_graph[dest].append((src, w))
 
     # initialize ranks
     r = {node: 1.0 / n for node in nodes}
 
     for _ in range(max_iter):
-        new_r = {node: (1 - d) / n for node in nodes}
-
-        # weighted-dangling mass (teams with no outgoing weights)
         dangling_mass = sum(r[node] for node in nodes if out_weight[node] == 0)
 
-        for node in nodes:
-            for src, w in rev_graph[node]:
+        dangling_contribution = d * (dangling_mass / n)
+        new_r = {node: (1.0 - d) / n + dangling_contribution for node in nodes}
+
+        for dest_node in nodes:
+            for src, w in rev_graph[dest_node]:
                 if out_weight[src] > 0:
                     contribution = r[src] * (w / out_weight[src])
-                    new_r[node] += d * contribution
-                    # dangling nodes distribute evenly
-                    new_r[node] += d * (dangling_mass / n)
+                    new_r[dest_node] += d * contribution
 
         # check convergence
         diff = sum(abs(new_r[n] - r[n]) for n in nodes)
@@ -126,6 +161,7 @@ def pageRank_weighted(graph, d=0.85, tol=1e-8, max_iter=200):
     # normalize
     total = sum(r.values())
     return {team: rank / total for team, rank in r.items()}
+
 
 
 def writefile(rankings: dict, filepath):
@@ -149,3 +185,4 @@ def writefile(rankings: dict, filepath):
 # normalized_graph = normalize_graph(graph)
 # pgrank = pageRank_weighted(normalized_graph)
 # writefile(pgrank, "123.csv")
+
