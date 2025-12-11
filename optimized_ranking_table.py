@@ -3,6 +3,7 @@ Optimized ranking table
 """
 
 import math
+import sys
 
 def readfile(filename):
     """
@@ -182,10 +183,55 @@ def writefile(rankings: dict, filepath):
             file.write(f"{rank},{team},{score:.6f},{percentage:.2f}\n")
 
 
-#Приклад роботи
-# graph = build_graph(readfile("matches.csv"))
-# normalized_graph = normalize_graph(graph)
-# pgrank = pageRank_weighted(normalized_graph)
-# writefile(pgrank, "123.csv")
+def main():
+    """CLI entry point for ranking tournament teams."""
+    if len(sys.argv) < 3:
+        print("Usage:")
+        print("  tournament rank <input_file> [output_file]")
+        print()
+        print("Приклади:")
+        print("  tournament rank matches.csv")
+        print("  tournament rank matches.csv ranking.csv")
+        sys.exit(1)
+
+    command = sys.argv[1]
+
+    if command != "rank":
+        print(f"Unknown command: {command}")
+        print("Use: tournament rank <input_file> [output_file]")
+        sys.exit(1)
+
+    input_file = sys.argv[2]
+    output_file = sys.argv[3] if len(sys.argv) > 3 else None
+
+    # 1. Read matches
+    try:
+        matches = readfile(input_file)
+    except FileNotFoundError:
+        print(f" File not found: {input_file}")
+        sys.exit(1)
+
+    # 2. Build graph
+    graph = build_graph(matches)
+
+    # 3. Normalize
+    normalized = normalize_graph(graph)
+
+    # 4. PageRank
+    rankings = pageRank_weighted(normalized)
+
+    # 5. Output
+    if output_file:
+        writefile(rankings, output_file)
+        print(f"Ranking saved to {output_file}")
+    else:
+        print("Tournament ranking:")
+        sorted_rankings = sorted(rankings.items(), key=lambda x: x[1], reverse=True)
+        for i, (team, score) in enumerate(sorted_rankings, start=1):
+            print(f"{i}. {team}: {score:.6f}")
+
+if __name__ == "__main__":
+    main()
+
 
 
