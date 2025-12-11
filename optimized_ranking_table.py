@@ -1,4 +1,6 @@
-"""Галімі квантори"""
+"""
+Optimized ranking table
+"""
 
 import math
 
@@ -185,4 +187,5 @@ def writefile(rankings: dict, filepath):
 # normalized_graph = normalize_graph(graph)
 # pgrank = pageRank_weighted(normalized_graph)
 # writefile(pgrank, "123.csv")
+
 
