@@ -80,7 +80,7 @@ def normalize_graph(graph: dict):
 
 
 
-def pageRank_weighted(graph, d=0.85, tol=1e-8, max_iter=200):
+def pagerank_weighted(graph, d=0.85, tol=1e-8, max_iter=200):
     """
     Compute the weighted PageRank of a directed graph with correct handling
     of dangling nodes (nodes with no outgoing edges).
@@ -218,7 +218,7 @@ def main():
     normalized = normalize_graph(graph)
 
     # 4. PageRank
-    rankings = pageRank_weighted(normalized)
+    rankings = pagerank_weighted(normalized)
 
     # 5. Output
     if output_file:
@@ -232,6 +232,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
