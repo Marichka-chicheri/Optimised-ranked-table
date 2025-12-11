@@ -5,24 +5,39 @@ GRAPH VISUALISATION
 import plotly.graph_objects as go
 import networkx as nx
 
+#========= OUTPUT =========
 
-#=========POSSIBLE OUTPUT=========
+def readfiles(filename_1, filename_2):
+    '''
+    Reads files with output
+    and returns tuple with 2 
+    dict and match name.
+    '''
+    match_name = filename_1.replace('.csv', '').upper()
+    info_dict = {}
+    name_dict = {}
 
-# номер команди і з ким вона змагалась
-# test_dict = {1:[1,2, 3, 4, 5, 6, 7, 8], 2:[1,4,8,3,5], 3:[4,5,6,7,8,2,1],\
-#             4:[3,2], 5:[6], 6:[5,8], 7:[8], 8:[7,6,2]}
+    with open(filename_2, 'r', encoding='utf-8') as f:
+        data = f.readlines()
+    for info in data[1:]:
+        inf = info.strip().split(',')
+        team = int(inf.pop(0))
+        name_dict[inf[0]] = team
+        info_dict[team] = inf
 
-# # номер команди, назва команди, очки, місце
-# test_dict_2 = {1: ['ЯСКО 2016', 0, 6],\
-#             2: ['Лівий Берег', 8, 1],\
-#             3: ['ФК Гостинний Двір', 0, 5],\
-#             4:['ДЮСШ 14', 4, 3],\
-#             5:['Нива', 0, 8],\
-#             6:['Колос', 1, 4],\
-#             7: ['Forward', 0, 7],\
-#             8: ['Вісла', 8, 2]}
+    with open(filename_1, 'r', encoding='utf-8') as f_2:
+        f_2 = f_2.readlines()
 
-# match_name = 'SILVER LEAGUE 2015'
+    game_dict = {n: [] for n in name_dict.values()}
+    for line in f_2[1:]:
+        line = line.split(',')[:2]
+        team_1 = name_dict[line[0]]
+        team_2 = name_dict[line[1]]
+        game_dict[team_1].append(team_2)
+        game_dict[team_2].append(team_1)
+
+    return (match_name, game_dict, info_dict)
+
 
 #=========FUNCTIONS FOR VISUALISATION=========
 
@@ -35,7 +50,7 @@ def graph_create(data, info):
     for circle_id, circle_info in info.items():
         name, score, place = circle_info
         graph.add_node(circle_id, idd=circle_id, name =name,\
-            score =score, place=place, size =(((len(data)-place)/(len(data)-1))+1)*30)
+            score =score, place=place, size =(((len(data)-circle_id)/(len(data)-1))+1)*30)
 
     for team, other_list in data.items():
         for other in other_list:
@@ -44,11 +59,9 @@ def graph_create(data, info):
     coordinates = nx.spring_layout(graph)
     return (graph, coordinates)
 
-def visu_graph(info,mname):
+def edge_create(info):
     '''
-    Graph visualisation in web
-    wih plotly.
-    '''
+    creates edge'''
     graph, coordinates = info
 
     noodle_x =[]
@@ -58,8 +71,16 @@ def visu_graph(info,mname):
         x1,y1= coordinates[noodle[1]]
         noodle_x.extend([x0,x1, None])
         noodle_y.extend([y0, y1, None])
-    wth = go.Scatter(x=noodle_x, y=noodle_y,
+    edges = go.Scatter(x=noodle_x, y=noodle_y,
                      line={'width':1.5, 'color':'DarkRed','shape':'spline', 'smoothing':0.2})
+    return edges
+
+def node_create(info):
+    '''
+    Creates nodes
+    '''
+    graph, coordinates = info
+
 
     circle_x = []
     circle_y = []
@@ -68,40 +89,56 @@ def visu_graph(info,mname):
     circle_team = []
 
     for circle in graph.nodes():
-        x, y = coordinates[circle]
-        circle_x.append(x)
-        circle_y.append(y)
+        circle_x.append(coordinates[circle][0])
+        circle_y.append(coordinates[circle][1])
 
         name = graph.nodes[circle]['name']
         score = graph.nodes[circle]['score']
-        size = graph.nodes[circle]['size']
         place = graph.nodes[circle]['place']
 
         text = (f'<b>TEAM:</b> {name}<br>'
                 f'<b>SCORE:</b> {score}<br>'
-                f'<b>PLACE:</b> {place}<br>'
+                f'<b>PERCENTAGE:</b> {place}%<br>'
                 '<extra></extra>')
         circle_text.append(text)
-        circle_size.append(size)
-        circle_team.append(str(graph.nodes[circle]['idd']))
+        circle_size.append(graph.nodes[circle]['size'])
+        # circle_team.append(str(graph.nodes[circle]['idd']))
+        if graph.nodes[circle]['idd'] == 1:
+            circle_team.append(str(graph.nodes[circle]['idd'])+'<br>🥇')
+        elif graph.nodes[circle]['idd'] == 2:
+            circle_team.append(str(graph.nodes[circle]['idd'])+'<br>🥈')
+        elif graph.nodes[circle]['idd'] == 3:
+            circle_team.append(str(graph.nodes[circle]['idd'])+'<br>🥉')
+        else:
+            circle_team.append(str(graph.nodes[circle]['idd']))
 
-    wht = go.Scatter(x=circle_x, y=circle_y,\
+    nodes = go.Scatter(x=circle_x, y=circle_y,\
                     mode='markers+text', text= circle_team,\
                     textfont={'color': 'White'},hovertemplate=circle_text,
-                    marker= dict(opacity=1.0, size=circle_size,\
-                                color=circle_size, colorscale='peach',
-                                 line_width=2, line_color='DarkRed'))
+                    marker= {'opacity':1.0, 'size':circle_size,\
+                                'color':circle_size, 'colorscale':'peach',
+                                 'line_width':2, 'line_color':'DarkRed'})
+    return nodes
 
-    visu= go.Figure(data=[wth, wht],
+def visu_graph(edges, nodes,mname):
+    '''
+    Graph visualisation in web
+    wih plotly.
+    '''
+    visu= go.Figure(data=[edges, nodes],
                  layout=go.Layout(title={'text':f'<br>{mname}','font':{'size':25,\
                          'color':'DarkRed'}, 'x':0.5, 'xanchor': 'center'},\
                          showlegend=False, plot_bgcolor="#ffffff",
-                hovermode='closest', xaxis=dict(
-                    showgrid=False, zeroline=False, showticklabels=False),
-                yaxis=dict(showgrid=False, zeroline=False, showticklabels=False)))
+                hovermode='closest', xaxis={
+                    'showgrid':False, 'zeroline':False, 'showticklabels':False},
+                yaxis={'showgrid':False, 'zeroline':False, 'showticklabels':False}))
 
     visu.show()
 
 
-# inf = graph_create(test_dict, test_dict_2)
-# visu_graph(inf, match_name)
+#========= TEST =========
+
+# m_name, dict_1, dict_2 = readfiles('test2.csv','test.csv')
+# g = graph_create(dict_1, dict_2)
+# print(m_name, dict_1, dict_2)
+# visu_graph(edge_create(g), node_create(g), m_name)
