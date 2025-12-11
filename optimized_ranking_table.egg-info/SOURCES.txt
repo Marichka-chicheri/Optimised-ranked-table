@@ -1,7 +1,0 @@
-optimized_ranking_table.py
-setup.py
-optimized_ranking_table.egg-info/PKG-INFO
-optimized_ranking_table.egg-info/SOURCES.txt
-optimized_ranking_table.egg-info/dependency_links.txt
-optimized_ranking_table.egg-info/entry_points.txt
-optimized_ranking_table.egg-info/top_level.txt

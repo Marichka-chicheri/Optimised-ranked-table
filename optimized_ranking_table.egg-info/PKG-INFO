@@ -1,9 +1,0 @@
-Metadata-Version: 2.4
-Name: optimized-ranking-table
-Version: 0.1.0
-Summary: Optimized ranking table using PageRank algorithm for tournament analysis.
-Author: Khrystyna Shymushovska, Anton Vertyporokh, Mariia Fedorenko, Pavlo Danylkiv, Ustym Trukhin, Viktoriia Hrebeniuk
-Author-email: shymushovska.pn@ucu.edu.ua, vertyporokh.pn@ucu.edu.ua, fedorenko.pn@ucu.edu.ua, danylkiv.pn@ucu.edu.ua, trukhin.pn@ucu.edu.ua, v.hrebeniuk.pn@ucu.edu.ua
-Dynamic: author
-Dynamic: author-email
-Dynamic: summary
