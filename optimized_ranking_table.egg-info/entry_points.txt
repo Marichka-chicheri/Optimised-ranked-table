@@ -1,0 +1,2 @@
+[console_scripts]
+tournament = optimized_ranking_table:main

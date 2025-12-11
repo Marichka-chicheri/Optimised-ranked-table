@@ -1,0 +1,94 @@
+CODE ANALYSIS REPORT
+====================
+
+ISSUES FOUND:
+-------------
+
+1. setup.py TYPO:
+   - Line 4: "descriprion" should be "description"
+   - Missing "py_modules" parameter (added in fixed version)
+
+2. PNG FILE MYSTERY:
+   - Your script does NOT create any PNG/graph files
+   - Your script only creates CSV text output
+   - If you're seeing PNG files, they're from a DIFFERENT script
+   - Likely from my previous tournament.py that you installed
+
+3. DIFFERENT FILE FORMATS:
+   Your script expects:
+     Team1,Team2,Score1,Score2
+     Barcelona,Real_Madrid,3,1
+   
+   My script expected:
+     TEAMS
+     Barcelona
+     MATCHES
+     Barcelona,Real_Madrid,A
+
+
+HOW YOUR SCRIPT WORKS:
+----------------------
+
+Input file format (matches.csv):
+  # Team1,Team2,Score1,Score2
+  Barcelona,Real_Madrid,3,1
+  Atletico,Sevilla,2,0
+
+Command to run:
+  tournament rank matches.csv
+  tournament rank matches.csv output.csv
+
+Output:
+  - Console: Rankings printed
+  - File: CSV with rank,team,pagerank,percentage
+
+
+WHAT TO DO:
+-----------
+
+1. UNINSTALL old version:
+   pip uninstall tournament-ranker
+
+2. Install YOUR version:
+   pip install .
+
+3. Run YOUR script:
+   tournament rank matches.csv
+
+4. Check output:
+   - Should see rankings in console
+   - NO PNG file (your script doesn't make graphs)
+
+
+FILES PROVIDED:
+---------------
+
+setup.py              - FIXED version (typo corrected, py_modules added)
+optimized_ranking_table.py - Your original script (no changes needed)
+matches.csv           - Example input file in YOUR format
+ANALYSIS.txt          - This file
+
+
+TO TEST:
+--------
+
+1. Open terminal
+2. cd to folder with these files
+3. pip install .
+4. tournament rank matches.csv
+5. You should see:
+   Tournament ranking:
+   1. Barcelona: 0.xxxxx
+   2. Real_Madrid: 0.xxxxx
+   etc.
+
+
+CONCLUSION:
+-----------
+
+✅ Your script is correctly built for CLI
+✅ setup.py works (after fixing typo)
+✅ Your script does NOT create PNG files
+❌ If you see PNG files, uninstall old version first
+
+The unexpected PNG behavior is from a DIFFERENT script!
