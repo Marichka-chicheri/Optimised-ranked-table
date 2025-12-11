@@ -10,7 +10,7 @@ import networkx as nx
 def readfiles(filename_1, filename_2):
     '''
     Reads files with output
-    and returns tuple with 2 
+    and returns tuple with 2
     dict and match name.
     '''
     match_name = filename_1.replace('.csv', '').upper()
@@ -61,7 +61,8 @@ def graph_create(data, info):
 
 def edge_create(info):
     '''
-    creates edge'''
+    creates edge
+    '''
     graph, coordinates = info
 
     noodle_x =[]

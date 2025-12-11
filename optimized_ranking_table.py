@@ -53,6 +53,7 @@ def build_graph(matches):
             continue
     return graph_of_winners
 
+
 def normalize_graph(graph: dict):
     """
     Docstring for normalize_graph
