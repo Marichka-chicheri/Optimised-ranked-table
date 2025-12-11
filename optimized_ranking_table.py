@@ -1,8 +1,7 @@
 """Галімі квантори"""
-
+#test
 import math
 import sys
-from setu
 
 def readfile(filename):
     """
@@ -181,6 +180,7 @@ def writefile(rankings: dict, filepath):
             percentage = score * 100
             file.write(f"{rank},{team},{score:.6f},{percentage:.2f}\n")
 
+
 def main():
     """CLI entry point for ranking tournament teams."""
     if len(sys.argv) < 3:
@@ -230,4 +230,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
