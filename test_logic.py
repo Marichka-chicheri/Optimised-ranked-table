@@ -12,15 +12,7 @@ To make a testing print
 in terminal in the same
 directory as files
 """
-
-def simple_matches():
-    return [
-        ("D", "S", 3, 1),
-        ("S", "Z", 2, 0),
-        ("Z", "D", 1, 0),
-        ("B", "A", 10, 0),
-    ]
-matches = simple_matches()
+matches = [("D", "S", 3, 1),("S", "Z", 2, 0),("Z", "D", 1, 0),("B", "A", 10, 0),]
 
 def test_build_graph_logic(matches:list):
     graph = build_graph(matches)
@@ -43,7 +35,7 @@ def test_normalization_sum(matches):
     norm_graph = normalize_graph(graph)
     weights = norm_graph["S"].values()
     weights_two = norm_graph["Z"].values()
-    # pytest.approx потрібен, щоби округлити
+    # pytest.approx требау, щоби округлити
     assert sum(weights) == pytest.approx(1.0)
     assert sum(weights_two) == pytest.approx(1.0)
 
