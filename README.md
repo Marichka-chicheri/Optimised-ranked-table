@@ -1,155 +1,196 @@
 # Optimised-ranked-table
-v2∙LatestCopyPublishTournament Ranking System
+
+# Tournament Ranking System
+
 A tournament ranking system based on the PageRank algorithm that analyzes match results to compute team rankings.
-Overview
-This project implements a sports team ranking system using a modified PageRank algorithm. The system processes match results and generates rankings based on wins and score differences.
-Core Functions
-readfile(filename)
+
+## Core Functions
+
+### 1. readfile(filename)
+
 Reads match results from a CSV file.
-Parameters:
 
-filename (str): Path to the input CSV file
+**Parameters:** 
+- `filename` (str) - Path to the input CSV file
 
-Returns:
+**Returns:** 
+- List of tuples containing `(team1, team2, score_team1, score_team2)`
 
-list: List of tuples containing (team1, team2, score_team1, score_team2)
+**Behavior:** 
+- Skips lines starting with `#` (comments)
+- Parses each line as: `team1,team2,score1,score2`
+- Converts scores to integers
 
-Behavior:
+---
 
-Skips lines starting with # (comments)
-Parses each line as: team1,team2,score1,score2
-Converts scores to integers
+### 2. build_graph(matches)
 
-
-build_graph(matches)
 Constructs a directed graph representing the tournament results.
-Parameters:
 
-matches (list): List of match tuples from readfile()
+**Parameters:** 
+- `matches` (list) - List of match tuples from `readfile()`
 
-Returns:
+**Returns:** 
+- Dictionary where `{loser: {winner: score_difference}}`
 
-dict: Graph structure where {loser: {winner: score_difference}}
+**Behavior:**
+- Creates edges from losing teams to winning teams
+- Edge weight equals the score difference
+- Ignores draws (matches with equal scores)
+- Accumulates weights if teams play multiple times
 
-Behavior:
+---
 
-Creates edges from losing teams to winning teams
-Edge weight equals the score difference
-Ignores draws (matches with equal scores)
-Accumulates weights if teams play multiple times
+### 3. normalize_graph(graph)
 
-Example:
-python# If TeamA beats TeamB 3-1 and 2-0
-# Graph: {TeamB: {TeamA: 5}}  # 5 = (3-1) + (2-0)
-
-normalize_graph(graph)
 Normalizes graph edge weights using logarithmic scaling.
-Parameters:
 
-graph (dict): Raw graph from build_graph()
+**Parameters:** 
+- `graph` (dict) - Raw graph from `build_graph()`
 
-Returns:
+**Returns:** 
+- Normalized graph with weights between 0 and 1
 
-dict: Normalized graph with weights between 0 and 1
+**Behavior:**
+- Applies transformation: `weight = 1 + log(count + 1)`
+- Normalizes weights so outgoing edges from each node sum to 1
+- Handles teams with no wins (empty outgoing edges)
 
-Behavior:
+**Purpose:** 
+- Logarithmic scaling prevents teams with large score differences from dominating the ranking unfairly
 
-Applies transformation: weight = 1 + log(count + 1)
-Normalizes weights so outgoing edges from each node sum to 1
-Handles teams with no wins (empty outgoing edges)
+---
 
-Purpose:
-Logarithmic scaling prevents teams with large score differences from dominating the ranking unfairly.
+### 4. pageRank_weighted(graph, d=0.85, tol=1e-8, max_iter=200)
 
-pageRank_weighted(graph, d=0.85, tol=1e-8, max_iter=200)
 Computes weighted PageRank scores for all teams.
-Parameters:
 
-graph (dict): Normalized weighted directed graph
-d (float): Damping factor, default 0.85
-tol (float): Convergence tolerance, default 1e-8
-max_iter (int): Maximum iterations, default 200
+**Parameters:** 
+- `graph` (dict) - Normalized weighted directed graph
+- `d` (float) - Damping factor, default 0.85
+- `tol` (float) - Convergence tolerance, default 1e-8
+- `max_iter` (int) - Maximum iterations, default 200
 
-Returns:
+**Returns:** 
+- Dictionary mapping each team to its PageRank score (sum = 1)
 
-dict: Dictionary mapping each team to its PageRank score (sum = 1)
+**Algorithm:** 
 
-Algorithm:
+```
 PR(v) = (1-d)/N + d*(dangling_mass/N) + d*Σ(PR(u) * w(u,v) / out_weight(u))
-Where:
+```
 
-PR(v) - PageRank of team v
-N - Total number of teams
-w(u,v) - Normalized edge weight from u to v
-out_weight(u) - Sum of all outgoing weights from u
-dangling_mass - Total PageRank of teams with no wins
+**Convergence:** 
+- Iterates until the L1 norm of rank changes is below `tol` or `max_iter` is reached
 
-Convergence:
-Iterates until the L1 norm of rank changes is below tol or max_iter is reached.
+---
 
-writefile(rankings, filepath)
+### 5. writefile(rankings, filepath)
+
 Writes rankings to a CSV file.
-Parameters:
 
-rankings (dict): Team rankings from pageRank_weighted()
-filepath (str): Output file path
+**Parameters:** 
+- `rankings` (dict) - Team rankings from `pageRank_weighted()`
+- `filepath` (str) - Output file path
 
-Output Format:
-csv#rank,team,pagerank,percentage
+**Output Format:**
+
+```csv
+#rank,team,pagerank,percentage
 1,TeamA,0.350000,35.00
 2,TeamB,0.280000,28.00
-Behavior:
+```
 
-Sorts teams by PageRank in descending order
-Assigns ranks starting from 1
-Converts PageRank to percentage (×100)
+**Behavior:**
+- Sorts teams by PageRank in descending order
+- Assigns ranks starting from 1
+- Converts PageRank to percentage (×100)
 
+---
 
-main()
+### 6. main()
+
 CLI entry point for the ranking system.
-Usage:
-bashpython tournament.py rank <input_file> [output_file]
-Workflow:
 
-Validates command-line arguments
-Reads matches using readfile()
-Builds graph using build_graph()
-Normalizes graph using normalize_graph()
-Computes rankings using pageRank_weighted()
-Outputs results (file or console)
+**Usage:** 
 
-Examples:
-bash# Print rankings to console
-python tournament.py rank matches.csv
+```bash
+python tournament.py rank <input_file> [output_file]
+```
 
-# Save rankings to file
-python tournament.py rank matches.csv rankings.csv
+**Workflow:**
+1. Validates command-line arguments
+2. Reads matches using `readfile()`
+3. Builds graph using `build_graph()`
+4. Normalizes graph using `normalize_graph()`
+5. Computes rankings using `pageRank_weighted()`
+6. Outputs results (file or console)
 
-Input File Format
+---
+
+## Input File Format
+
 CSV format with match results:
-csv# Comments start with #
+
+```csv
+# Comments start with #
 TeamA,TeamB,3,1
 TeamB,TeamC,2,2
 TeamC,TeamA,1,0
-Each line: team1,team2,score1,score2
+```
 
-How It Works
+Each line: `team1,team2,score1,score2`
 
-Graph Construction: Edges point from losers to winners, weighted by score difference
-Normalization: Logarithmic scaling smooths extreme values
-PageRank: Iterative algorithm distributes "ranking mass" through the graph
-Result: Teams that beat strong opponents rank higher
+---
 
-Key Insight: A win against a highly-ranked team contributes more to your ranking than beating a weak team
+## How It Works
 
+1. **Graph Construction:** Edges point from losers to winners, weighted by score difference
+2. **Normalization:** Logarithmic scaling smooths extreme values
+3. **PageRank:** Iterative algorithm distributes "ranking mass" through the graph
+4. **Result:** Teams that beat strong opponents rank higher
 
+**Key Insight:** A win against a highly-ranked team contributes more to your ranking than beating a weak team.
 
+---
 
+## Testing
 
+### 1. speed_test.py (Performance Comparison)
 
+This file compares how fast our PageRank algorithm works compared to the standard implementation in the NetworkX library.
 
+**Contents:**
+- `readfile(FILENAME)` - Reads match data from file
+- `build_graph(data)` - Builds our victory graph with weights (score differences)
+- `normalize_graph(g)` - Normalizes graph weights
+- `pageRank_weighted(n)` - Runs our modified PageRank and measures "Our time"
+- **NetworkX Block** - Builds a graph specifically for NetworkX and runs standard `nx.pagerank`, measuring "NetworkX time"
 
+---
 
+### 2. test_logic.py (Logic Verification)
+
+This file contains automatic tests (pytest) that verify all parts of our algorithm work correctly.
+
+**Contents:**
+- `test_build_graph_logic` - Verifies that the graph is built correctly: edges go from winner to loser, and weight corresponds to score difference
+- `test_ignore_draws` - Verifies that draws (equal scores) are completely ignored and don't create links in the graph
+- `test_normalization_sum` - Verifies that after normalization, the sum of all outgoing weights from any team equals exactly 1.0
+- `test_pagerank_sum_to_one` - Verifies that the sum of PageRank for all teams in the final result also equals exactly 1.0 (PageRank requirement)
+
+---
+
+### 3. test_benchmark.py (Results Comparison)
+
+This file performs a comparison of final rankings obtained by our algorithm with results produced by NetworkX.
+
+**Contents:**
+- `test_compare_with_networkx` - This is the main test. It calculates our ranking (team_ranks) and NetworkX ranking (nx_ranks) for the same set of matches
+- **Table Output** - Prints a comparison table with the difference between the two rankings for each team
+- `assert total_diff < 0.05` - Verifies that the total difference between our result and NetworkX result is very small (less than 0.05). This confirms that our algorithm works correctly and produces reliable results
+
+---
 
 #Testing
 **1.speed_test.py (Порівняння Швидкості):**
