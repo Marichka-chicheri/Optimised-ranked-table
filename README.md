@@ -145,12 +145,98 @@ Each line: `team1,team2,score1,score2`
 
 ## How It Works
 
+### Overview
+
+The system uses a four-step process to rank tournament teams:
+
 1. **Graph Construction:** Edges point from losers to winners, weighted by score difference
 2. **Normalization:** Logarithmic scaling smooths extreme values
 3. **PageRank:** Iterative algorithm distributes "ranking mass" through the graph
 4. **Result:** Teams that beat strong opponents rank higher
 
 **Key Insight:** A win against a highly-ranked team contributes more to your ranking than beating a weak team.
+
+---
+
+### PageRank Algorithm Explained
+
+PageRank is an algorithm originally developed by Google founders to rank web pages. In our tournament context, we adapt it to rank sports teams based on match results.
+
+#### The Core Concept
+
+Think of PageRank as a "voting system" where:
+- Each team has a certain amount of "ranking power"
+- When Team A beats Team B, Team B essentially "votes" for Team A
+- The strength of this vote depends on how much ranking power Team B has
+- Teams gain ranking power by beating other strong teams
+
+#### The Mathematical Formula
+
+```
+PR(v) = (1-d)/N + d*(dangling_mass/N) + d*Σ(PR(u) * w(u,v) / out_weight(u))
+```
+
+**Breaking it down:**
+- `PR(v)` - The PageRank score for team v (what we're calculating)
+- `(1-d)/N` - Base probability (every team gets a minimum score)
+- `d` - Damping factor (0.85) - represents the probability of "following" a connection
+- `N` - Total number of teams in the tournament
+- `dangling_mass` - Total ranking power from teams with no wins (redistributed equally)
+- `Σ(PR(u) * w(u,v) / out_weight(u))` - Sum of weighted votes from teams that lost to v
+
+#### How the Iteration Works
+
+1. **Initialization:** Every team starts with equal ranking: `PR = 1/N`
+2. **Iteration:** In each step, we recalculate each team's ranking based on:
+   - Who they beat (incoming edges)
+   - How strong those beaten teams are (their current PageRank)
+   - The score difference (edge weight)
+3. **Convergence:** We repeat until rankings stabilize (change less than 0.00000001)
+4. **Normalization:** Final scores sum to 1.0 (100%)
+
+#### Example Scenario
+
+Consider three teams:
+- Team A beats Team B (3-1)
+- Team B beats Team C (2-0)  
+- Team A beats Team C (5-1)
+
+**Initial ranks:** A=0.333, B=0.333, C=0.333
+
+**After iteration:**
+- Team A gains ranking power from both B and C
+- Team B gains some power from C
+- Team C has no wins, so loses ranking power
+
+**Final ranks (example):** A=0.50, B=0.35, C=0.15
+
+#### What PageRank Returns
+
+The `pageRank_weighted()` function returns a dictionary:
+
+```python
+{
+    'TeamA': 0.285430,  # 28.54% of total ranking power
+    'TeamB': 0.245821,  # 24.58%
+    'TeamC': 0.223147,  # 22.31%
+    'TeamD': 0.245602   # 24.56%
+}
+```
+
+**Interpretation:**
+- Values are between 0 and 1
+- Sum of all values equals exactly 1.0
+- Higher value = stronger team
+- Can be converted to percentage (multiply by 100)
+- Can be used to create ordered rankings (1st, 2nd, 3rd, etc.)
+
+#### Why PageRank Works Well for Tournaments
+
+1. **Transitive strength:** If A beats B and B beats C, A gets credit for indirectly dominating C
+2. **Quality wins matter:** Beating the #1 team boosts your rank more than beating the #10 team
+3. **Score differences count:** Winning 5-0 matters more than winning 1-0
+4. **Handles cycles:** Works even when A beats B, B beats C, and C beats A
+5. **No single metric:** Uses the entire graph structure, not just win/loss records
 
 ---
 
@@ -189,6 +275,24 @@ This file performs a comparison of final rankings obtained by our algorithm with
 - `test_compare_with_networkx` - This is the main test. It calculates our ranking (team_ranks) and NetworkX ranking (nx_ranks) for the same set of matches
 - **Table Output** - Prints a comparison table with the difference between the two rankings for each team
 - `assert total_diff < 0.05` - Verifies that the total difference between our result and NetworkX result is very small (less than 0.05). This confirms that our algorithm works correctly and produces reliable results
+
+---
+
+## Project Structure
+
+```
+tournament-ranking/
+├── optimized_ranking_table.py   # Core ranking algorithm
+├── visualisation.py             # Graph visualization
+├── speed_test.py                # Performance comparison
+├── test_logic.py                # Logic unit tests
+├── test_benchmark.py            # Benchmark tests
+├── setup.py                     # SLI
+├── matches.csv                  # Example input data
+├── matches_uni.csv              # Additional data file for checks
+├── test_matches.csv             # Data for testing
+└── README.md                    # Project documentation
+```
 
 ---
 
