@@ -45,14 +45,6 @@ Normalizes graph edge weights using logarithmic scaling.
 **Returns:** 
 - Normalized graph with weights between 0 and 1
 
-**Behavior:**
-- Applies transformation: `weight = 1 + log(count + 1)`
-- Normalizes weights so outgoing edges from each node sum to 1
-- Handles teams with no wins (empty outgoing edges)
-
-**Purpose:** 
-- Logarithmic scaling prevents teams with large score differences from dominating the ranking unfairly
-
 ---
 
 ### 4. pageRank_weighted(graph, d=0.85, tol=1e-8, max_iter=200)
@@ -177,16 +169,6 @@ PR(v) = (1-d)/N + d*(dangling_mass/N) + d*Σ(PR(u) * w(u,v) / out_weight(u))
    - The score difference (edge weight)
 3. **Convergence:** We repeat until rankings stabilize (change less than 0.00000001)
 4. **Normalization:** Final scores sum to 1.0 (100%)
-
-
-
-#### Why PageRank Works Well for Tournaments
-
-1. **Transitive strength:** If A beats B and B beats C, A gets credit for indirectly dominating C
-2. **Quality wins matter:** Beating the #1 team boosts your rank more than beating the #10 team
-3. **Score differences count:** Winning 5-0 matters more than winning 1-0
-4. **Handles cycles:** Works even when A beats B, B beats C, and C beats A
-5. **No single metric:** Uses the entire graph structure, not just win/loss records
 
 ---
 
