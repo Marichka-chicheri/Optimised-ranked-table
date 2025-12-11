@@ -1,6 +1,6 @@
-# Optimised-ranked-table
+# Optimised-ranking-table
 
-# Tournament Ranking System
+## Tournament Ranking System
 
 A tournament ranking system based on the PageRank algorithm that analyzes match results to compute team rankings.
 
