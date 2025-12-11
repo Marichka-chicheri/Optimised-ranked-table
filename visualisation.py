@@ -4,13 +4,14 @@ GRAPH VISUALISATION
 
 import plotly.graph_objects as go
 import networkx as nx
+import sys
 
 #========= OUTPUT =========
 
 def readfiles(filename_1, filename_2):
     '''
     Reads files with output
-    and returns tuple with 2 
+    and returns tuple with 2
     dict and match name.
     '''
     match_name = filename_1.replace('.csv', '').upper()
@@ -50,13 +51,13 @@ def graph_create(data, info):
     for circle_id, circle_info in info.items():
         name, score, place = circle_info
         graph.add_node(circle_id, idd=circle_id, name =name,\
-            score =score, place=place, size =(((len(data)-circle_id)/(len(data)-1))+1)*37)
+            score =score, place=place, size =(((len(data)-circle_id)/(len(data)-1))+1)*30)
 
     for team, other_list in data.items():
         for other in other_list:
             graph.add_edge(team, other)
 
-    coordinates = nx.spring_layout(graph, k=0.5)
+    coordinates = nx.spring_layout(graph)
     return (graph, coordinates)
 
 def edge_create(info):
@@ -72,7 +73,7 @@ def edge_create(info):
         noodle_x.extend([x0,x1, None])
         noodle_y.extend([y0, y1, None])
     edges = go.Scatter(x=noodle_x, y=noodle_y,
-                     line={'width':1.5, 'color':'White','shape':'spline', 'smoothing':0.2})
+                     line={'width':1.5, 'color':'DarkRed','shape':'spline', 'smoothing':0.2})
     return edges
 
 def node_create(info):
@@ -116,8 +117,8 @@ def node_create(info):
                     mode='markers+text', text= circle_team,\
                     textfont={'color': 'White'},hovertemplate=circle_text,
                     marker= {'opacity':1.0, 'size':circle_size,\
-                                'color':circle_size, 'line': {'width':0}, 'colorscale':'Bluered'
-                                 })
+                                'color':circle_size, 'colorscale':'peach',
+                                 'line_width':2, 'line_color':'DarkRed'})
     return nodes
 
 def visu_graph(edges, nodes,mname):
@@ -127,9 +128,9 @@ def visu_graph(edges, nodes,mname):
     '''
     visu= go.Figure(data=[edges, nodes],
                  layout=go.Layout(title={'text':f'<br>{mname}','font':{'size':25,\
-                         'color':'White'}, 'x':0.5, 'xanchor': 'center'},\
-                         showlegend=False, paper_bgcolor="#000012",
-                plot_bgcolor="#0B0B1B", hovermode='closest', xaxis={
+                         'color':'DarkRed'}, 'x':0.5, 'xanchor': 'center'},\
+                         showlegend=False, plot_bgcolor="#ffffff",
+                hovermode='closest', xaxis={
                     'showgrid':False, 'zeroline':False, 'showticklabels':False},
                 yaxis={'showgrid':False, 'zeroline':False, 'showticklabels':False}))
 
@@ -140,4 +141,5 @@ def visu_graph(edges, nodes,mname):
 
 # m_name, dict_1, dict_2 = readfiles('test2.csv','test.csv')
 # g = graph_create(dict_1, dict_2)
+# print(m_name, dict_1, dict_2)
 # visu_graph(edge_create(g), node_create(g), m_name)

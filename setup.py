@@ -8,10 +8,10 @@ setup(
            "Pavlo Danylkiv, Ustym Trukhin, Viktoriia Hrebeniuk",
     author_email="shymushovska.pn@ucu.edu.ua, vertyporokh.pn@ucu.edu.ua, fedorenko.pn@ucu.edu.ua, "
             "danylkiv.pn@ucu.edu.ua, trukhin.pn@ucu.edu.ua, v.hrebeniuk.pn@ucu.edu.ua",
-    packages=['optimized_ranking_table'],
+    py_modules=['optimized_ranking_table', 'cli', 'visualisation'],
     entry_points={
         'console_scripts': [
-            'tournament=optimized_ranking_table:main',
+            'tournament=cli:main',
         ],
     },
 )

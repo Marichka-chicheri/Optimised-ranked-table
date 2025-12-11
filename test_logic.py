@@ -8,13 +8,17 @@ of optimized_ranking_table.py
 
 
 To make a testing print
-<pytest test_logic.py> 
+<pytest test_logic.py>
 in terminal in the same
 directory as files
 """
-matches = [("D", "S", 3, 1),("S", "Z", 2, 0),("Z", "D", 1, 0),("B", "A", 10, 0),]
+matches = [
+    ("D", "S", 3, 1),
+    ("S", "Z", 2, 0),
+    ("Z", "D", 1, 0),
+    ("B", "A", 10, 0),]
 
-def test_build_graph_logic(matches:list):
+def test_build_graph_logic():
     graph = build_graph(matches)
     assert 'S' in graph
     assert 'D' in graph['S']
@@ -30,7 +34,7 @@ def test_ignore_draws():
     if 'B' in graph:
         assert graph['B'] == {}
 
-def test_normalization_sum(matches):
+def test_normalization_sum():
     graph = build_graph(matches)
     norm_graph = normalize_graph(graph)
     weights = norm_graph["S"].values()
@@ -39,7 +43,7 @@ def test_normalization_sum(matches):
     assert sum(weights) == pytest.approx(1.0)
     assert sum(weights_two) == pytest.approx(1.0)
 
-def test_pagerank_sum_to_one(matches):
+def test_pagerank_sum_to_one():
     graph = build_graph(matches)
     norm_graph = normalize_graph(graph)
     ranks = pageRank_weighted(norm_graph)
@@ -47,7 +51,7 @@ def test_pagerank_sum_to_one(matches):
     # Сума PageRank завжди мала б бути 1
     assert sum(result) == pytest.approx(1.0)
 
-def test_gian_score(matches):
+def test_gian_score():
     graph = build_graph(matches)
     assert 'A' in graph
     assert 'B' in graph['A']
