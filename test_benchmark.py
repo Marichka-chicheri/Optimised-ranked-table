@@ -4,8 +4,8 @@ from optimized_ranking_table import build_graph, normalize_graph, pageRank_weigh
 
 def test_compare_with_networkx():
     """
-    Порівнює кастомну реалізацію PageRank з еталонною реалізацією NetworkX.
-    Примітка: Оскільки NetworkX має трохи іншу логіку обробки 'dangling nodes' за замовчуванням,
+    Порівнює нашу реалізацію PageRank з еталонною реалізацією NetworkX.
+    Примітка: Оскільки NetworkX має трохи іншу логіку обробки висячих нікців,
     ми перевіряємо кореляцію або близькість значень, а не ідеальну точність до 1e-8.
     """
     matches = [
