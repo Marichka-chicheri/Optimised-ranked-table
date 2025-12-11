@@ -16,11 +16,6 @@ Reads match results from a CSV file.
 **Returns:** 
 - List of tuples containing `(team1, team2, score_team1, score_team2)`
 
-**Behavior:** 
-- Skips lines starting with `#` (comments)
-- Parses each line as: `team1,team2,score1,score2`
-- Converts scores to integers
-
 ---
 
 ### 2. build_graph(matches)
@@ -36,7 +31,6 @@ Constructs a directed graph representing the tournament results.
 **Behavior:**
 - Creates edges from losing teams to winning teams
 - Edge weight equals the score difference
-- Ignores draws (matches with equal scores)
 - Accumulates weights if teams play multiple times
 
 ---
@@ -101,13 +95,6 @@ Writes rankings to a CSV file.
 2,TeamB,0.280000,28.00
 ```
 
-**Behavior:**
-- Sorts teams by PageRank in descending order
-- Assigns ranks starting from 1
-- Converts PageRank to percentage (×100)
-
----
-
 ### 6. main()
 
 CLI entry point for the ranking system.
@@ -139,9 +126,6 @@ TeamB,TeamC,2,2
 TeamC,TeamA,1,0
 ```
 
-Each line: `team1,team2,score1,score2`
-
----
 
 ## How It Works
 
@@ -194,41 +178,7 @@ PR(v) = (1-d)/N + d*(dangling_mass/N) + d*Σ(PR(u) * w(u,v) / out_weight(u))
 3. **Convergence:** We repeat until rankings stabilize (change less than 0.00000001)
 4. **Normalization:** Final scores sum to 1.0 (100%)
 
-#### Example Scenario
 
-Consider three teams:
-- Team A beats Team B (3-1)
-- Team B beats Team C (2-0)  
-- Team A beats Team C (5-1)
-
-**Initial ranks:** A=0.333, B=0.333, C=0.333
-
-**After iteration:**
-- Team A gains ranking power from both B and C
-- Team B gains some power from C
-- Team C has no wins, so loses ranking power
-
-**Final ranks (example):** A=0.50, B=0.35, C=0.15
-
-#### What PageRank Returns
-
-The `pageRank_weighted()` function returns a dictionary:
-
-```python
-{
-    'TeamA': 0.285430,  # 28.54% of total ranking power
-    'TeamB': 0.245821,  # 24.58%
-    'TeamC': 0.223147,  # 22.31%
-    'TeamD': 0.245602   # 24.56%
-}
-```
-
-**Interpretation:**
-- Values are between 0 and 1
-- Sum of all values equals exactly 1.0
-- Higher value = stronger team
-- Can be converted to percentage (multiply by 100)
-- Can be used to create ordered rankings (1st, 2nd, 3rd, etc.)
 
 #### Why PageRank Works Well for Tournaments
 
