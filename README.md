@@ -4,6 +4,12 @@
 
 A tournament ranking system based on the PageRank algorithm that analyzes match results to compute team rankings.
 
+## Start Project
+- git clone https://github.com/Marichka-chicheri/Optimised-ranked-table.git
+- cd Optimised-ranked-table
+- docker build -t ranking-table .
+- docker run --rm -it ranking-table
+
 ## Core Functions
 
 ### 1. readfile(filename)
@@ -228,10 +234,6 @@ The file configures the Python package optimized-ranking-table. It defines the p
   - tournament test_logic = shows how good our code works, if there are some problems.
   - tournament test_benchmark - shows whether our own implementation of the PageRank algorithm (pageRank_weighted) performs approximately the same as the    reference implementation in the NetworkX library.
 
-## Docker
-git clone https://github.com/Marichka-chicheri/Optimised-ranked-table.git
-cd Optimised-ranked-table
-docker build -t ranking-table .
-docker run --rm -it ranking-table
+
 
 
