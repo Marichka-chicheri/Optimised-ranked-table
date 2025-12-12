@@ -294,4 +294,16 @@ tournament-ranking/
 └── README.md                    # Project documentation
 ```
 
+## How does it work?
+- Firstly you need to open terminal in Python or CMD.
+- Write pip install . to install all requirement libraries.
+- Then write "tournament" to see the list of commands.
+  **Commands:**
+  - tournament rank <input_file> - shows you the ranking table with the results in terminal.
+  - tournament rank <input_file> [output_file] - writes down the ranking table into a file.
+  - tournament visualisation <input_file> - opens a page with the visualised garph.
+  - tournament speed_test <input_file> - shows how quick our own PageRank implementation is compared to the built-in PageRank algorithm from the NetworkX library.
+  - tournament test_logic = shows how good our code works, if there are some problems.
+  - tournament test_benchmark - shows whether our own implementation of the PageRank algorithm (pageRank_weighted) performs approximately the same as the    reference implementation in the NetworkX library.
+
 
