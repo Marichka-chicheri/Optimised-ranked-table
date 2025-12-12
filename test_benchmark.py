@@ -1,12 +1,12 @@
+"""testing"""
 import networkx as nx
-import pytest
 from optimized_ranking_table import build_graph, normalize_graph, pageRank_weighted
 
 def test_compare_with_networkx():
     """
-    Порівнює нашу реалізацію PageRank з еталонною реалізацією NetworkX.
-    Примітка: Оскільки NetworkX має трохи іншу логіку обробки висячих нікців,
-    ми перевіряємо кореляцію або близькість значень, а не ідеальну точність до 1e-8.
+    Compares our PageRank implementation with the NetworkX reference implementation.
+    Note: Since NetworkX has a slightly different logic for handling dangling nodes,
+    we check for correlation or closeness of the values, rather than perfect accuracy down to 1e-8.
     """
     matches = [
         ("TeamA", "TeamB", 3, 0),
@@ -30,9 +30,9 @@ def test_compare_with_networkx():
 
     nx_ranks = nx.pagerank(nx_graph, alpha=0.85, weight='weight', tol=1e-8, max_iter= 10000)
 
-    print("\n--- Порівняймо ---")
+    print("\n--- Comparison ---")
     print(f"{'Team':<10} | {'Team Rank':<10} | {'NX Rank':<10} | {'Difference':<10}")
-    
+
     total_diff = 0
     for team in team_ranks:
         r_dev = team_ranks[team]
@@ -40,7 +40,7 @@ def test_compare_with_networkx():
         diff = abs(r_dev - r_nx)
         total_diff += diff
         print(f"{team:<10} | {r_dev:.6f}   | {r_nx:.6f}   | {diff:.6f}")
-    assert total_diff < 0.05, "Відхилення від NetworkX too much!"
+    assert total_diff < 0.05
 
 if __name__ == "__main__":
     test_compare_with_networkx()
