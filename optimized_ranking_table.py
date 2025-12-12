@@ -1,4 +1,4 @@
-"""Галімі квантори"""
+"""Optimized ranking table"""
 
 import math
 
@@ -178,3 +178,4 @@ def writefile(rankings: dict, filepath):
         for rank, (team, score) in enumerate(sorted_rankings, start=1):
             percentage = score * 100
             file.write(f"{rank},{team},{score:.6f},{percentage:.2f}\n")
+
