@@ -1,2 +1,9 @@
 networkx
 plotly
+scipy
+pytest
+sys
+time
+scipy
+math
+setuptools

@@ -247,5 +247,3 @@ The file configures the Python package optimized-ranking-table. It defines the p
   - tournament speed_test <input_file> - shows how quick our own PageRank implementation is compared to the built-in PageRank algorithm from the NetworkX library.
   - tournament test_logic = shows how good our code works, if there are some problems.
   - tournament test_benchmark - shows whether our own implementation of the PageRank algorithm (pageRank_weighted) performs approximately the same as the    reference implementation in the NetworkX library.
-
-
