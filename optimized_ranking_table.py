@@ -1,4 +1,4 @@
-"""Шикарні квантори"""
+"""main formula"""
 
 import math
 import sys

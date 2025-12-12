@@ -1,3 +1,5 @@
+"""testing"""
+
 import time
 import networkx as nx
 from optimized_ranking_table import readfile, build_graph, normalize_graph, pageRank_weighted
@@ -9,7 +11,7 @@ g = build_graph(data)
 n = normalize_graph(g)
 pageRank_weighted(n)
 
-print(f"Ваш час:      {time.time() - start:.6f} сек")
+print(f"Your time:      {time.time() - start:.6f} сек")
 
 nx_graph = nx.DiGraph()
 for t1, t2, s1, s2 in data:
@@ -20,5 +22,7 @@ start = time.time()
 nx.pagerank(nx_graph, weight='weight')
 print(f"NetworkX час: {time.time() - start:.6f} сек")
 
-#помітно що зі збільшенням обєму файлу, так виглядає, що бібліотеці стає легше а нашому файлу швидше, проте це вже для надто
-#великих об'ємів
+# It is noticeable that as the file size increases,
+# it seems that the library handles it more easily and our
+# implementation becomes faster as well, although this only happens
+# for very large volumes of data.
