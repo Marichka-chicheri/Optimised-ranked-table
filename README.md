@@ -11,11 +11,10 @@ A tournament ranking system based on the PageRank algorithm that analyzes match 
 Reads match results from a CSV file.
 
 **Parameters:** 
-- `filename` (str) - Path to the input CSV file
+- `filename` (str) - Path to the input CSV file *example of file to read in **matches.csv***
 
 **Returns:** 
-- List of tuples containing `(team1, team2, score_team1, score_team2)`
-
+- List of tuples containing `(team1, team2, score_team1, score_team2)`  
 ---
 
 ### 2. build_graph(matches)
@@ -87,25 +86,6 @@ Writes rankings to a CSV file.
 2,TeamB,0.280000,28.00
 ```
 
-### 6. main()
-
-CLI entry point for the ranking system.
-
-**Usage:** 
-
-```bash
-python tournament.py rank <input_file> [output_file]
-```
-
-**Workflow:**
-1. Validates command-line arguments
-2. Reads matches using `readfile()`
-3. Builds graph using `build_graph()`
-4. Normalizes graph using `normalize_graph()`
-5. Computes rankings using `pageRank_weighted()`
-6. Outputs results (file or console)
-
----
 
 ## Input File Format
 
@@ -248,4 +228,6 @@ The file configures the Python package optimized-ranking-table. It defines the p
   - tournament speed_test <input_file> - shows how quick our own PageRank implementation is compared to the built-in PageRank algorithm from the NetworkX library.
   - tournament test_logic = shows how good our code works, if there are some problems.
   - tournament test_benchmark - shows whether our own implementation of the PageRank algorithm (pageRank_weighted) performs approximately the same as the    reference implementation in the NetworkX library.
+
+
 
